@@ -28,8 +28,8 @@ def _display_detected_frames(conf, model, st_count, st_frame, image):
     #image = cv2.resize(image, (720, int(720 * (9 / 16))))
 
     # Predict the objects in the image using YOLOv8 model
-    res = model.predict(image, conf=conf)
-    
+    res = model.track(image, conf=conf)
+    boxes = res[0].boxes
     inText = 'Vehicle In'
     outText = 'Vehicle Out'
     if config.OBJECT_COUNTER1 != None:
@@ -47,7 +47,7 @@ def _display_detected_frames(conf, model, st_count, st_frame, image):
                    channels="BGR",
                    use_column_width=True
                    )
-
+    return len(boxes)
 
 @st.cache_resource
 def load_model(model_path):
@@ -102,8 +102,7 @@ def infer_uploaded_image(conf, model):
                              use_column_width=True)
                     try:
                         with st.expander("Detection Results"):
-                            for box in boxes:
-                                st.write(box.xywh)
+                            st.write(f"Number of Mango Detected: {len(boxes)}")
                     except Exception as ex:
                         st.write("No image is uploaded yet!")
                         st.write(ex)
@@ -135,18 +134,23 @@ def infer_uploaded_video(conf, model):
                         tfile.name)
                     st_count = st.empty()
                     st_frame = st.empty()
+                    maxCount = 0
                     while (vid_cap.isOpened()):
                         success, image = vid_cap.read()
                         if success:
-                            _display_detected_frames(conf,
+                            
+                            count = _display_detected_frames(conf,
                                                      model,
                                                      st_count,
                                                      st_frame,
                                                      image
                                                      )
+                            maxCount = max(maxCount, count)
                         else:
                             vid_cap.release()
                             break
+                    with st.expander("Detection Results"):
+                        st.write(f"Number of Mango Detected: {maxCount}")
                 except Exception as e:
                     st.error(f"Error loading video: {e}")
 

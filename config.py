@@ -31,19 +31,11 @@ SOURCES_LIST = ["Image", "Video", "Webcam"]
 
 # DL model config
 DETECTION_MODEL_DIR = ROOT / 'weights' / 'detection'
-YOLOv8n = DETECTION_MODEL_DIR / "yolov8n.pt"
-YOLOv8s = DETECTION_MODEL_DIR / "yolov8s.pt"
-YOLOv8m = DETECTION_MODEL_DIR / "yolov8m.pt"
-YOLOv8l = DETECTION_MODEL_DIR / "yolov8l.pt"
-YOLOv8x = DETECTION_MODEL_DIR / "yolov8x.pt"
+YOLOv8_custom = DETECTION_MODEL_DIR / "mangoYOLO.pt"
 
 DETECTION_MODEL_LIST = [
-    "yolov8n.pt",
-    "yolov8s.pt",
-    "yolov8m.pt",
-    "yolov8l.pt",
-    "yolov8x.pt"]
-
+    "mangoYOLO.pt",
+]
 
 OBJECT_COUNTER = None
 OBJECT_COUNTER1 = None
