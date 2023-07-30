@@ -92,7 +92,7 @@ def infer_uploaded_image(conf, model):
 
             # Load the selected image
             selected_image = Image.open(test_images[selected_image_index])
-            uploaded_image = Image.open(default_image_path)
+            uploaded_image = selected_image
             # adding the uploaded image to the page with caption
             st.image(
             image=selected_image,
