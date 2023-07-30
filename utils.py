@@ -14,6 +14,9 @@ import cv2
 from PIL import Image
 import tempfile
 import config
+import os
+
+default_image_path = "test_images/1.jpg"
 
 def _display_detected_frames(conf, model, st_count, st_frame, image):
     """
@@ -73,22 +76,39 @@ def infer_uploaded_image(conf, model):
     """
     source_img = st.sidebar.file_uploader(
         label="Choose an image...",
-        type=("jpg", "jpeg", "png", 'bmp', 'webp')
+        type=("jpg", "jpeg", "png", 'bmp', 'webp'),
     )
 
     col1, col2 = st.columns(2)
-
+    
     with col1:
+        if source_img is None:
+            # Get a list of available test images in the "test_images" directory
+            test_image_dir = "test_images"
+            test_images = [os.path.join(test_image_dir, filename) for filename in os.listdir(test_image_dir) if filename.lower().endswith((".jpg", ".jpeg", ".png", ".bmp", ".webp"))]
+
+            # Add a slider in the sidebar for selecting test images
+            selected_image_index = st.sidebar.slider("Select Test Image", 0, len(test_images) - 1, 0)
+
+            # Load the selected image
+            selected_image = Image.open(test_images[selected_image_index])
+            uploaded_image = Image.open(default_image_path)
+            # adding the uploaded image to the page with caption
+            st.image(
+            image=selected_image,
+            caption="Test Image",
+            use_column_width=True
+        )
         if source_img:
             uploaded_image = Image.open(source_img)
             # adding the uploaded image to the page with caption
             st.image(
                 image=source_img,
-                caption="Uploaded Image",
+                caption="Source Image",
                 use_column_width=True
             )
 
-    if source_img:
+    if uploaded_image:
         if st.button("Execution"):
             with st.spinner("Running..."):
                 res = model.predict(uploaded_image,
@@ -184,3 +204,4 @@ def infer_uploaded_webcam(conf, model):
                 break
     except Exception as e:
         st.error(f"Error loading video: {str(e)}")
+
